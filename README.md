@@ -54,5 +54,19 @@ chmod +x install.sh
 // test/main.cpp
 #define BOOST_TEST_MODULE libbitcoin_explorer_test
 #include <boost/test/unit_test.hpp>
+
+// test/generated_find.cpp
+#include <boost/test/unit_test.hpp>
+#include <bitcoin/explorer.hpp>
+using namespace bc::explorer;
+using namespace bc::explorer::commands;
+BOOST_AUTO_TEST_SUITE(generated)
+BOOST_AUTO_SUITE(generated__find)
+BOOST_AUTO_TEST_CASE(generated__find_address_decode__returns_object)
+{
+  BOOST_REQUIRE(find("address-decode") != nullptr);
+}
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()
 ```
 
