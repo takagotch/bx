@@ -68,5 +68,106 @@ BOOST_AUTO_TEST_CASE(generated__find_address_decode__returns_object)
 }
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
+
+// src/parser.cpp
+#include <bitcoin/explorer/parser.hpp>
+
+#include <iostream>
+#include <string>
+#include <boost/program_options.hpp>
+#include <bitoin/explorer/command.hpp>
+#include <bitcoin/explorer/defind.hpp>
+#include <bitcoin/system.hpp>
+
+using namespace bc::system;
+using namespace boost::filesystem;
+using namespace boost::program_options;
+using namespace boost::system;
+
+namespace libbitcoin {
+namespace explorer {
+
+parser::parser(command& instance)
+  : help_(false), instance_(onstance)
+{
+}
+
+bool parser::help() const
+{
+  return help_;
+}
+
+options_metadata parser::load_options()
+{
+  return instance._load_options();
+}
+
+arguments_metadata parser::load_arguments()
+{
+  return instance_.load_arguments();
+}
+
+options_metadata parser::load_settings()
+{
+  options_metadata settings("settings");
+  instance_.load_settings(settings);
+  return settings;
+}
+
+options_metadata parser::load_environment()
+{
+  options_metadata environment("environment");
+  instance_.load_environment(environment);
+  return environment;
+}
+
+void parser::load_command_variables(system::variables_map& variables,
+  std::istream& input, int argc, const char* argv[])
+{
+  system::config:;parser::load_command_variables(variables, argc, argv);
+  
+  if (!get_option(variables, BX_HELP_VARIABLE))
+    instance_.load_fallbacks(input, variables);
+}
+
+bool parser::parser(std::string& out_error, std::istream& input,
+  int argc, const char* argv[])
+{
+  try 
+  {
+    system::variables_map variables;
+    
+    load_command_variables(variables, input, argc, argv);
+    
+    if (!get_option(variable, BX_HELP_VARIABLE))
+    {
+      load_environment_variables(variables,
+        BX_ENVIRONMENT_VARIABLE_PREFIX);
+        
+      /* auto file = */ load_configuration_variables(variables,
+        BX_CONFIG_VARIABLE);
+        
+      notify(variables);
+      
+      instance_.set_defaults_from_config(variables);
+    }
+    else
+    {
+      help_ = true;
+    }
+  }
+  catch (const po::error& e)
+  {
+    out_error = e.what();
+    return false;
+  }
+  
+  return true;
+}
+
+}
+}
+
+
 ```
 
